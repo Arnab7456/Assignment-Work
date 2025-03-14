@@ -4,7 +4,7 @@ import { Button } from "./ui/button";
 import Image from "next/image";
 export default function Navbar() {
   return (
-    <header className="bg-[#FCFCFC] gap-4 shadow-sm rounded-full px-4">
+    <header className="bg-inherit gap-4 shadow-sm rounded-full px-4">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         <div className="flex items-center gap-8">
           <div className="flex items-center gap-2">
