@@ -159,3 +159,7 @@
   }
 }
 
+@font-face {
+  font-family: "Satoshi";
+  src: url("/fonts/Satoshi-Regular.ttf");
+}

@@ -67,7 +67,7 @@ function Slider({
         data-slot="slider-thumb"
         key={index}
         className={cn(
-          "ring-black border-white bg-white block h-5 w-5 rounded-full border-2 shadow-sm ring-1 focus-visible:outline-none",
+          "ring-black border-black bg-white block h-5 w-5 rounded-full border-2 shadow-sm ring-1 focus-visible:outline-none",
           index === 0 && "pointer-events-none ",
           "relative before:absolute before:w-3 before:h-3 before:bg-black before:rounded-full before:left-1/2 before:top-1/2 before:transform before:-translate-x-1/2 before:-translate-y-1/2"
         )}

@@ -2,7 +2,11 @@
 import Link from "next/link";
 import { Button } from "./ui/button";
 import Image from "next/image";
+import { useState } from "react";
+import JobDrawer from "./JobDrawer";
 export default function Navbar() {
+    const [open, setOpen] = useState(false)
+  const [selectedJobType, setSelectedJobType] = useState("Full Time")
   return (
     <header className=" bg-inherit gap-4 shadow-sm rounded-full px-4">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
@@ -43,9 +47,10 @@ export default function Navbar() {
             </Link>
           </nav>
         </div>
-        <Button className="bg-gradient-to-b from-[#A128FF] to-[#6100AD] hover:bg-purple-700 text-white rounded-full px-6 ml-4">
+        <Button className=" cursor-pointer bg-gradient-to-b from-[#A128FF] to-[#6100AD] hover:bg-purple-700 text-white rounded-full px-6 ml-4" onClick={() => setOpen(true)}>
           Create Jobs
         </Button>
+        <JobDrawer open={open} setOpen={setOpen} selectedJobType={selectedJobType} setSelectedJobType={setSelectedJobType} />
       </div>
     </header>
   );

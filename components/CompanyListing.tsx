@@ -18,27 +18,34 @@ export default function CompanyListing() {
                   <div className="w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0 bg-[#94949440] rounded-lg overflow-hidden flex items-center justify-center shadow-2xl">
                     {job.company === "amazon" && (
                       <div className="bg-black rounded-full w-full h-full flex items-center justify-center p-1.5">
-                        <Image 
-                          src={job.logo} 
-                          alt={job.company} 
+                        <Image
+                          src={job.logo}
+                          alt={job.company}
+                          width={40} 
+                          height={40} 
                           className="w-full h-full object-contain"
                         />
                       </div>
                     )}
                     {job.company === "tesla" && (
                       <div className="bg-white w-full h-full flex items-center justify-center p-1">
-                        <Image 
-                          src={job.logo} 
-                          alt={job.company} 
-                          className="w-full h-full object-contain "
+                        <Image
+                          src={job.logo}
+                          alt={job.company}
+                          width={40} 
+                          height={40} 
+                          className="w-full h-full object-contain"
                         />
                       </div>
                     )}
+
                     {job.company === "Swiggy" && (
                       <div className="bg-orange-500 rounded-full w-full h-full flex items-center justify-center p-2">
-                        <Image 
-                          src={job.logo} 
-                          alt={job.company} 
+                        <Image
+                          src={job.logo}
+                          alt={job.company}
+                          width={40} 
+                          height={40} 
                           className="w-full h-full object-contain"
                         />
                       </div>
@@ -48,7 +55,6 @@ export default function CompanyListing() {
                     {job.postedTime}
                   </span>
                 </div>
-
 
                 <h3 className="font-semibold text-base sm:text-lg md:text-xl line-clamp-2">
                   {job.title}
@@ -109,7 +115,6 @@ export default function CompanyListing() {
                   </div>
                 </div>
 
-
                 <ul className="text-xs sm:text-sm text-gray-600 space-y-2 sm:space-y-2.5">
                   <li className="flex items-start">
                     <span className="text-gray-400 mr-1.5">•</span>
@@ -143,7 +148,7 @@ export default function CompanyListing() {
                     <span>{job.tag || "Apply Now"}</span>
                   </div>
                 ) : (
-                  <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 sm:py-3 text-sm sm:text-base">
+                  <Button className="w-full bg-[#00AAFF] hover:bg-[#00AAFF] text-white py-2.5 sm:py-3 text-sm sm:text-base">
                     Apply Now
                   </Button>
                 )}
