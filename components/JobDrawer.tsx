@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "./ui/button";
 import React, { useState } from "react";
 
+
 const CustomSelect = ({
   options,
   value,
@@ -65,15 +66,98 @@ export default function JobDrawer({
   setOpen,
   selectedJobType,
   setSelectedJobType,
+  onJobCreated,
 }: {
   open: boolean;
   setOpen: (open: boolean) => void;
   selectedJobType: string;
   setSelectedJobType: (selectedJobType: string) => void;
+  onJobCreated?: () => void; // Callback for when a job is created
 }) {
-  const jobTypes = ["FullTime", "PartTime", "Contract", "Internship"];
+  // Updated to match the enum values in the Prisma schema
+  const jobTypes = ["FullTime", "PartTime", "Contract", "Freelance"];
   const locations = ["Chennai", "Bangalore", "Mumbai", "Delhi", "Remote"];
+  
+  // Form state
+  const [loading, setLoading] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState("");
+  const [jobTitle, setJobTitle] = useState("Full Stack Developer");
+  const [companyName, setCompanyName] = useState("Amazon");
+  const [salaryMin, setSalaryMin] = useState("0");
+  const [salaryMax, setSalaryMax] = useState("12,00,000");
+  const [deadline, setDeadline] = useState("");
+  const [jobDescription, setJobDescription] = useState("");
+  const [error, setError] = useState("");
+
+  // Map job type to enum values that match the Prisma schema
+  const mapJobTypeToEnum = (type: string) => {
+    switch(type) {
+      case "FullTime": return "FULL_TIME";
+      case "PartTime": return "PART_TIME";
+      case "Contract": return "CONTRACT";
+      case "Freelance": return "FREELANCE";
+      default: return "FULL_TIME";
+    }
+  };
+
+  // Handle form submission
+  const handlePublish = async () => {
+    try {
+      setLoading(true);
+      setError(""); // Clear any previous errors
+      
+      // Basic validation
+      if (!jobTitle || !selectedLocation || !companyName || !selectedJobType || !jobDescription) {
+        setError("Please fill in all required fields");
+        setLoading(false);
+        return;
+      }
+      
+      const deadlineDate = deadline ? new Date(deadline) : null;
+      
+      // Parse salary values properly
+      const minSalary = salaryMin ? parseFloat(salaryMin.replace(/,/g, '')) : 0;
+      const maxSalary = salaryMax ? parseFloat(salaryMax.replace(/,/g, '')) : 0;
+      
+      const response = await fetch('/api/jobs/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          jobTitle,
+          location: selectedLocation,
+          salaryMin: minSalary,
+          salaryMax: maxSalary,
+          companyName,
+          jobType: mapJobTypeToEnum(selectedJobType),
+          applicationDeadline: deadlineDate,
+          description: jobDescription, // Changed from jobDescription to match the API
+        }),
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to create job');
+      }
+      
+      setOpen(false);
+      if (onJobCreated) onJobCreated();
+      
+      // Reset form fields
+      setSelectedLocation("");
+      setJobTitle("Full Stack Developer");
+      setCompanyName("Amazon");
+      setSalaryMin("0");
+      setSalaryMax("12,00,000");
+      setDeadline("");
+      setJobDescription("");
+      setError("");
+    } catch (error) {
+      console.error('Error creating job:', error);
+      setError(error instanceof Error ? error.message : 'Failed to create job. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -84,6 +168,11 @@ export default function JobDrawer({
           </DialogTitle>
         </DialogHeader>
         <div className="p-6 pt-2">
+          {error && (
+            <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+              {error}
+            </div>
+          )}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
               <div>
@@ -91,12 +180,13 @@ export default function JobDrawer({
                   htmlFor="jobTitle"
                   className="block text-sm font-medium mb-1"
                 >
-                  Job Title
+                  Job Title <span className="text-red-500">*</span>
                 </label>
                 <Input
                   id="jobTitle"
                   placeholder="e.g. Full Stack Developer"
-                  defaultValue="Full Stack Developer"
+                  value={jobTitle}
+                  onChange={(e) => setJobTitle(e.target.value)}
                   className="w-full"
                 />
               </div>
@@ -106,7 +196,7 @@ export default function JobDrawer({
                   htmlFor="location"
                   className="block text-sm font-medium mb-1"
                 >
-                  Location
+                  Location <span className="text-red-500">*</span>
                 </label>
                 <CustomSelect
                   options={locations}
@@ -141,7 +231,8 @@ export default function JobDrawer({
                     </span>
                     <Input
                       className="pl-7 w-full h-10 font-normal border-gray-300"
-                      defaultValue="0"
+                      value={salaryMin}
+                      onChange={(e) => setSalaryMin(e.target.value)}
                     />
                   </div>
                   <div className="relative flex-1">
@@ -164,7 +255,8 @@ export default function JobDrawer({
                     </span>
                     <Input
                       className="pl-7 w-full h-10 font-normal border-gray-300 "
-                      defaultValue="12,00,000"
+                      value={salaryMax}
+                      onChange={(e) => setSalaryMax(e.target.value)}
                     />
                   </div>
                 </div>
@@ -177,12 +269,13 @@ export default function JobDrawer({
                   htmlFor="companyName"
                   className="block text-sm font-medium mb-1"
                 >
-                  Company Name
+                  Company Name <span className="text-red-500">*</span>
                 </label>
                 <Input
                   id="companyName"
                   placeholder="e.g. Amazon"
-                  defaultValue="Amazon"
+                  value={companyName}
+                  onChange={(e) => setCompanyName(e.target.value)}
                   className="w-full"
                 />
               </div>
@@ -192,7 +285,7 @@ export default function JobDrawer({
                   htmlFor="jobType"
                   className="block text-sm font-medium mb-1"
                 >
-                  Job Type
+                  Job Type <span className="text-red-500">*</span>
                 </label>
                 <CustomSelect
                   options={jobTypes}
@@ -215,7 +308,10 @@ export default function JobDrawer({
                   </span>
                   <Input
                     id="deadline"
-                    className="w-full pl-7"
+                    type="date"
+                    value={deadline}
+                    onChange={(e) => setDeadline(e.target.value)}
+                    className="w-full"
                   />
                 </div>
               </div>
@@ -223,11 +319,13 @@ export default function JobDrawer({
 
             <div className="col-span-full space-y-4">
               <label className="block text-sm font-medium mb-1 ">
-                Job Description
+                Job Description <span className="text-red-500">*</span>
               </label>
               <Textarea
                 className="w-full min-h-[200px] border-gray-300 font-normal "
                 placeholder="Please share a description to let the candidate know about the job"
+                value={jobDescription}
+                onChange={(e) => setJobDescription(e.target.value)}
               />
             </div>
           </div>
@@ -252,8 +350,12 @@ export default function JobDrawer({
               </svg>
             </Button>
 
-            <Button className="bg-blue-500 hover:bg-blue-600 gap-2 text-white">
-              Publish
+            <Button 
+              className="bg-blue-500 hover:bg-blue-600 gap-2 text-white"
+              onClick={handlePublish}
+              disabled={loading}
+            >
+              {loading ? "Publishing..." : "Publish"}
               <svg
                 width="4"
                 height="8"
@@ -264,9 +366,9 @@ export default function JobDrawer({
                 <path
                   d="M7 1.5L11 5.5L7 9.5M1 1.5L5 5.5L1 9.5"
                   stroke="white"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                 />
               </svg>
             </Button>

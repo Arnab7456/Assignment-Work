@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 
 export default function CompanyListing() {
+ 
+
   return (
     <main className="flex-1 bg-[#FBFBFF] py-4 sm:py-5 md:py-6 lg:py-7 xl:py-14 cursor-pointer">
       <div className="container mx-auto px-3 xs:px-4 sm:px-5 md:px-6 lg:px-8">

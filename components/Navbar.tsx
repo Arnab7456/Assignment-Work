@@ -4,16 +4,18 @@ import { Button } from "./ui/button";
 import Image from "next/image";
 import { useState } from "react";
 import JobDrawer from "./JobDrawer";
-import { motion } from "framer-motion";
+import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 export default function Navbar() {
-    const [open, setOpen] = useState(false)
-  const [selectedJobType, setSelectedJobType] = useState("Full Time")
+  const [open, setOpen] = useState(false);
+  const [selectedJobType, setSelectedJobType] = useState("Full Time");
   return (
     <header className=" bg-inherit gap-4 shadow-sm rounded-full px-4">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         <div className="flex items-center gap-8">
           <div className="flex items-center gap-2">
-            <Image src="/cmwlogo.svg" alt="Logo" width={32} height={32} />
+            <Link href="/">
+              <Image src="/cmwlogo.svg" alt="Logo" width={32} height={32} />
+            </Link>
           </div>
           <nav className="hidden md:flex items-center space-x-6 ">
             <Link
@@ -46,18 +48,45 @@ export default function Navbar() {
             >
               Testimonials
             </Link>
+            <SignedOut>
+              <Button className=" cursor-pointer bg-gradient-to-b from-[#A128FF] to-[#6100AD] hover:bg-purple-700 text-white rounded-full px-6">
+                <Link href="/sign-up" className="text-white font-medium">
+                  Sign Up
+                </Link>
+              </Button>
+              <Button className=" cursor-pointer bg-gradient-to-b from-[#A128FF] to-[#6100AD] hover:bg-purple-700 text-white rounded-full px-6 ">
+                <Link href="/sign-in" className="text-white font-medium">
+                  Sign In
+                </Link>
+              </Button>
+            </SignedOut>
+           
           </nav>
         </div>
-        <motion.div
-  whileTap={{ scale: 0.9 }}
->
-        <Button className=" cursor-pointer bg-gradient-to-b from-[#A128FF] to-[#6100AD] hover:bg-purple-700 text-white rounded-full px-6 ml-4" onClick={() => setOpen(true)}>
-          Create Jobs
-        </Button>
-        </motion.div>
-        <JobDrawer open={open} setOpen={setOpen} selectedJobType={selectedJobType} setSelectedJobType={setSelectedJobType} />
+
+        <div>
+          <SignedIn>
+            <Button
+              className=" cursor-pointer bg-gradient-to-b from-[#A128FF] to-[#6100AD] hover:bg-purple-700 text-white rounded-full px-6 ml-4"
+              onClick={() => setOpen(true)}
+            >
+              Create Jobs
+            </Button>
+          </SignedIn>
+          <JobDrawer
+            open={open}
+            setOpen={setOpen}
+            selectedJobType={selectedJobType}
+            setSelectedJobType={setSelectedJobType}
+          />
+         
+        </div>
+         <SignedIn>
+          <div className="">
+            <UserButton />
+          </div>
+          </SignedIn>
       </div>
-    
     </header>
   );
 }
