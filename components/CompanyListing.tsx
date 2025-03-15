@@ -5,7 +5,7 @@ import Image from "next/image";
 
 export default function CompanyListing() {
   return (
-    <main className="flex-1 bg-[#FBFBFF] py-4 sm:py-5 md:py-6 lg:py-7 xl:py-14">
+    <main className="flex-1 bg-[#FBFBFF] py-4 sm:py-5 md:py-6 lg:py-7 xl:py-14 cursor-pointer">
       <div className="container mx-auto px-3 xs:px-4 sm:px-5 md:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
           {jobListings.map((job) => (
@@ -51,7 +51,7 @@ export default function CompanyListing() {
                       </div>
                     )}
                   </div>
-                  <span className="text-xs sm:text-sm bg-[#B0D9FF] text-black px-2.5 py-1 rounded-full">
+                  <span className="text-xs sm:text-sm bg-[#B0D9FF] text-black px-2.5 py-1 rounded-xl">
                     {job.postedTime}
                   </span>
                 </div>
@@ -136,7 +136,7 @@ export default function CompanyListing() {
                   <div
                     className={`relative ${
                       job.tag === "Govt Charge" ? "bg-pink-600" : "bg-gray-700"
-                    } text-white rounded-md py-2 text-center text-sm sm:text-base`}
+                    } text-white  py-2 text-center text-sm sm:text-base`}
                   >
                     {job.tag === "Anonymous" && (
                       <div className="absolute -top-3 right-0">

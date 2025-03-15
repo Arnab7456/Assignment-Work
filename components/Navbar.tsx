@@ -4,6 +4,7 @@ import { Button } from "./ui/button";
 import Image from "next/image";
 import { useState } from "react";
 import JobDrawer from "./JobDrawer";
+import { motion } from "framer-motion";
 export default function Navbar() {
     const [open, setOpen] = useState(false)
   const [selectedJobType, setSelectedJobType] = useState("Full Time")
@@ -47,11 +48,16 @@ export default function Navbar() {
             </Link>
           </nav>
         </div>
+        <motion.div
+  whileTap={{ scale: 0.9 }}
+>
         <Button className=" cursor-pointer bg-gradient-to-b from-[#A128FF] to-[#6100AD] hover:bg-purple-700 text-white rounded-full px-6 ml-4" onClick={() => setOpen(true)}>
           Create Jobs
         </Button>
+        </motion.div>
         <JobDrawer open={open} setOpen={setOpen} selectedJobType={selectedJobType} setSelectedJobType={setSelectedJobType} />
       </div>
+    
     </header>
   );
 }
