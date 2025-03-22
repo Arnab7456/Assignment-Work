@@ -25,6 +25,9 @@ model Job {
   applicationDeadline DateTime ?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  @@index([jobTitle])
+  @@index([location])
+  @@index([jobType])
 }
 
 enum JobType {
@@ -33,3 +36,4 @@ enum JobType {
   FREELANCE
   CONTRACT  
 }
+ 
