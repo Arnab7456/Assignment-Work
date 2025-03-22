@@ -19,7 +19,7 @@ export default function Navbar() {
           </div>
           <nav className="hidden md:flex items-center space-x-6 ">
             <Link
-              href="#"
+              href="/"
               className="text-gray-800 hover:text-purple-600 font-medium"
             >
               Home
