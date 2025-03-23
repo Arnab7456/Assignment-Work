@@ -1,5 +1,5 @@
 "use client";
-import { Search, MapPin, Users, ChevronsUpDown } from "lucide-react";
+import { Search, MapPin, Users, ChevronsUpDown, ArrowLeft } from "lucide-react";
 import { CommandInput } from "@/components/ui/command";
 import { Slider } from "@/components/ui/slider";
 import { cn } from "../lib/utils";
@@ -17,14 +17,9 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-
-const locations = [
-  { value: "remote", label: "Remote" },
-  { value: "hybrid", label: "Hybrid" },
-  { value: "onsite", label: "On-site" },
-];
+import { useState} from "react";
+import { useRouter, usePathname } from "next/navigation";
+import Link from "next/link";
 
 const jobTypes = [
   { value: "full-time", label: "Full Time" },
@@ -36,35 +31,34 @@ const jobTypes = [
 
 export default function SearchFilter() {
   const router = useRouter();
-  const [openLocation, setOpenLocation] = useState(false);
-  const [locationValue, setLocationValue] = useState("");
   const [openJobType, setOpenJobType] = useState(false);
   const [jobTypeValue, setJobTypeValue] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  const [salaryRange, setSalaryRange] = useState([50, 80]);
+  const [location, setLocation] = useState("");
+  const [salaryRange, setSalaryRange] = useState([0, 80]);
+  const pathname = usePathname();
+
+  const formatSalary = (value : number) => {
+    return `₹${value}k`;
+  };
 
   const handleSearch = () => {
     const params = new URLSearchParams();
     if (searchQuery) {
-      params.append('search', searchQuery);
-    }
-    if (locationValue) {
-      params.append('location', locationValue);
+      params.append("search", searchQuery);
     }
     if (jobTypeValue) {
-      params.append('jobType', jobTypeValue);
+      params.append("jobType", jobTypeValue);
     }
-    params.append('minSalary', salaryRange[0].toString());
-    params.append('maxSalary', salaryRange[1].toString());
-    // Navigate with query parameters
+    params.append("minSalary", salaryRange[0].toString());
+    params.append("maxSalary", salaryRange[1].toString());
     router.push(`jobs?${params.toString()}`);
   };
 
   return (
-    <div className="bg-inherit py-6">
-      <div className="container mx-auto px-1">
+    <div className="bg-inherit grid items-center justify-items-center">
+      <div>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          {/* Search Input */}
           <div className="relative pb-4 border-b border-gray-500 md:border-b-0 md:border-r-2 md:border-gray-300 md:pr-4">
             <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
             <input
@@ -75,56 +69,15 @@ export default function SearchFilter() {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-
-          {/* Location Selector */}
           <div className="relative pb-4 border-b border-gray-500 md:border-b-0 md:border-r-2 md:border-gray-300 md:pr-4">
-          <MapPin className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
-
-            <Popover open={openLocation} onOpenChange={setOpenLocation}>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  role="combobox"
-                  aria-expanded={openLocation}
-                  className="w-full pl-12 pr-4 py-2.5 h-auto justify-between font-normal"
-                >
-                  {locationValue || "Preferred Location"}
-                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-full p-0 shadow-lg rounded-md border border-gray-200 animate-slide-in bg-white">
-                <Command>
-                  <CommandInput placeholder="Search location..." />
-                  <CommandList>
-                    <CommandEmpty>No location found.</CommandEmpty>
-                    <CommandGroup>
-                      {locations.map((location) => (
-                        <CommandItem
-                          key={location.value}
-                          value={location.value}
-                          onSelect={(currentValue) => {
-                            setLocationValue(
-                              currentValue === locationValue ? "" : currentValue
-                            );
-                            setOpenLocation(false);
-                          }}
-                        >
-                          <Check
-                            className={cn(
-                              "mr-2 h-4 w-4",
-                              locationValue === location.value
-                                ? "opacity-100"
-                                : "opacity-0"
-                            )}
-                          />
-                          {location.label}
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </CommandList>
-                </Command>
-              </PopoverContent>
-            </Popover>
+            <MapPin className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search By Job Location"
+              className="w-full pl-10 pr-4 py-2.5 rounded-md focus:outline-none focus:ring-1 focus:ring-purple-500"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+            />
           </div>
 
           <div className="relative pb-4 border-b border-gray-400 md:border-b-0 md:border-r-2 md:border-gray-300 md:pr-4">
@@ -176,25 +129,39 @@ export default function SearchFilter() {
             </Popover>
           </div>
 
-          <div className="space-y-3">
-            <div className="flex justify-between items-center">
+          <div className="">
+            <div className="flex justify-between items-center mb-1">
               <span className="text-sm font-medium">Salary Per Month</span>
-              <span className="text-sm font-medium">₹50k - ₹80k</span>
+              <span className="text-sm">{formatSalary(salaryRange[0])} - {formatSalary(salaryRange[1])}</span>
             </div>
-            <div className="w-full">
+            <div>
               <Slider
-              value={salaryRange}
-              onValueChange={setSalaryRange}
-              defaultValue={[1, 80]} max={100} className="w-full" />
+                value={salaryRange}
+                onValueChange={setSalaryRange}
+                defaultValue={[50, 80]}
+                max={100}
+                className="w-full mt-2"
+              />
             </div>
           </div>
-          <div className="col-span-1 md:col-span-4 flex justify-end mt-4">
-            <Button
-              onClick={handleSearch}
-              className="bg-[#00AAFF] hover:bg-[#0099EE] text-white px-8 py-2.5"
-            >
-              Search Jobs
-            </Button>
+
+          <div className="flex justify-between w-full col-span-1 md:col-span-4">
+            <div>
+              {pathname === "/jobs" && (
+                <Link href="/" className="flex items-center">
+                  <ArrowLeft className="h-5 w-5" />
+                  <span className="ml-2">Back</span>
+                </Link>
+              )}
+            </div>
+            <div>
+              <Button
+                onClick={handleSearch}
+                className="bg-[#00AAFF] hover:bg-[#0099EE] text-white px-8 py-2.5"
+              >
+                Search Jobs
+              </Button>
+            </div>
           </div>
         </div>
       </div>

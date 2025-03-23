@@ -8,9 +8,21 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const search = searchParams.get('search');
     const location = searchParams.get('location');
-    const jobType = searchParams.get('jobType') as JobType | null;
+    const jobTypeParam = searchParams.get('jobType');
     const minSalary = parseInt(searchParams.get('minSalary') || '0');
     const maxSalary = parseInt(searchParams.get('maxSalary') || '100');
+
+    // Properly handle the jobType enum
+    let jobType: JobType | undefined = undefined;
+    if (jobTypeParam) {
+      // Convert to uppercase to match enum format if needed
+      const formattedJobType = jobTypeParam.toUpperCase().replace('-', '_');
+      
+      // Check if the value is a valid JobType
+      if (Object.values(JobType).includes(formattedJobType as JobType)) {
+        jobType = formattedJobType as JobType;
+      }
+    }
 
     const jobs = await prisma.job.findMany({
       where: {
