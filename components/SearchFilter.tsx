@@ -1,8 +1,8 @@
 "use client";
-import { Search, MapPin, Users, ChevronsUpDown, ArrowLeft } from "lucide-react";
+import { Search, MapPin, Users, ChevronsDown, ArrowLeft } from "lucide-react";
 import { CommandInput } from "@/components/ui/command";
 import { Slider } from "@/components/ui/slider";
-import { cn } from "../lib/utils";
+
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,9 +17,10 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { useState} from "react";
+import { useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 const jobTypes = [
   { value: "full-time", label: "Full Time" },
@@ -35,10 +36,10 @@ export default function SearchFilter() {
   const [jobTypeValue, setJobTypeValue] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [location, setLocation] = useState("");
-  const [salaryRange, setSalaryRange] = useState([0, 80]);
+  const [salaryRange, setSalaryRange] = useState([50, 80]);
   const pathname = usePathname();
 
-  const formatSalary = (value : number) => {
+  const formatSalary = (value: number) => {
     return `₹${value}k`;
   };
 
@@ -80,24 +81,24 @@ export default function SearchFilter() {
             />
           </div>
 
-          <div className="relative pb-4 border-b border-gray-400 md:border-b-0 md:border-r-2 md:border-gray-300 md:pr-4">
+          <div className="relative pb-4 md:pr-4">
             <Users className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
             <Popover open={openJobType} onOpenChange={setOpenJobType}>
               <PopoverTrigger asChild>
                 <Button
-                  variant="outline"
+                  variant="ghost" 
                   role="combobox"
                   aria-expanded={openJobType}
-                  className="w-full pl-10 pr-4 py-2.5 h-auto justify-between font-normal"
+                  className="w-full pl-10 pr-4 py-2.5 h-auto mx-auto font-normal hover:bg-transparent focus-visible:ring-1 focus-visible:ring-purple-500" // Added focus styles
                 >
-                  {jobTypeValue || "Job Type"}
-                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  {jobTypeValue || "Enter Job Type"}
+                  <ChevronsDown className="ml-2 h-10 w-10 shrink-0 opacity-50" />
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-[200px] p-0">
+              <PopoverContent className="w-[200px] p-0" align="start">
                 <Command>
                   <CommandInput placeholder="Search job type..." />
-                  <CommandList>
+                  <CommandList className="bg-white">
                     <CommandEmpty>No job type found.</CommandEmpty>
                     <CommandGroup>
                       {jobTypes.map((jobType) => (
@@ -111,14 +112,12 @@ export default function SearchFilter() {
                             setOpenJobType(false);
                           }}
                         >
-                          <Check
-                            className={cn(
+                          <Check className={cn(
                               "mr-2 h-4 w-4",
                               jobTypeValue === jobType.value
                                 ? "opacity-100"
                                 : "opacity-0"
-                            )}
-                          />
+                            )}/>
                           {jobType.label}
                         </CommandItem>
                       ))}
@@ -132,7 +131,9 @@ export default function SearchFilter() {
           <div className="">
             <div className="flex justify-between items-center mb-1">
               <span className="text-sm font-medium">Salary Per Month</span>
-              <span className="text-sm">{formatSalary(salaryRange[0])} - {formatSalary(salaryRange[1])}</span>
+              <span className="text-sm">
+                {formatSalary(salaryRange[0])} - {formatSalary(salaryRange[1])}
+              </span>
             </div>
             <div>
               <Slider

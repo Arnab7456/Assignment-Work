@@ -6,7 +6,7 @@ function Slider({
   className,
   defaultValue,
   value: valueProp,
-  min = 0,
+  min = 50,
   max = 100,
   onValueChange,
   ...props
